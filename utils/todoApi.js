@@ -1,7 +1,7 @@
-const BASE_URL = "http://localhost:3000";
-
 export const getTodos = async () => {
-  const res = await fetch(`${BASE_URL}/api/todos`, { next: { revalidate: 0 } });
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos`, {
+    next: { revalidate: 0 },
+  });
 
   if (!res.ok) {
     console.log("error");
@@ -11,7 +11,7 @@ export const getTodos = async () => {
 };
 
 export const addTodo = async (title) => {
-  const res = await fetch(`${BASE_URL}/api/todos`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos`, {
     next: { revalidate: 0 },
     method: "POST",
     body: JSON.stringify({ title }),
