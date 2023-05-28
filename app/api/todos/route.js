@@ -1,76 +1,39 @@
-import { promises as fs } from "fs";
-import path from "path";
+import { NextResponse } from "next/server";
+import Todo from "../../../models/todo";
+import { connectToDB } from "../../../utils/db";
 
-const generateRandomId = () => {
-  return Math.floor(Math.random() * 1000000);
+export const GET = async () => {
+  try {
+    await connectToDB();
+    const todos = await Todo.find({});
+
+    if (!todos) {
+      return console.log("error");
+    }
+
+    return new Response(JSON.stringify(todos), { status: 200 });
+  } catch (error) {
+    return new Error(error);
+  }
 };
 
-const jsonDirectory = () => {
-  return path.join(process.cwd(), "app/api/todos");
+export const POST = async (req) => {
+  try {
+    await connectToDB();
+
+    const { title } = await req.json();
+
+    console.log(title);
+
+    const newTodo = new Todo({
+      title,
+    });
+
+    await newTodo.save();
+    console.log(newTodo);
+
+    return new Response(JSON.stringify(newTodo), { status: 200 });
+  } catch (error) {
+    return new Error(error);
+  }
 };
-
-async function fetchJsonData() {
-  const data = await fs.readFile(jsonDirectory() + "/todos.json", "utf-8");
-  return data;
-}
-
-export async function GET() {
-  console.log("GET");
-  const data = await fetchJsonData();
-  const dataJson = JSON.parse(data);
-
-  const onlyNotCompleted = dataJson.filter((todo) => !todo.completed);
-
-  return new Response(JSON.stringify(onlyNotCompleted), {
-    status: 200,
-  });
-}
-
-export async function POST(request) {
-  const existingJsonData = JSON.parse(await fetchJsonData());
-
-  const body = await request.json();
-  const randomId = generateRandomId();
-  const newTodo = {
-    id: randomId,
-    title: body.title,
-    completed: false,
-  };
-
-  const newJsonData = [...existingJsonData, newTodo];
-
-  await fs.writeFile(
-    jsonDirectory() + "/todos.json",
-    JSON.stringify(newJsonData),
-    {
-      encoding: "utf-8",
-    }
-  );
-
-  return new Response(JSON.stringify(body), {
-    status: 200,
-  });
-}
-
-export async function DELETE(request) {
-  const { searchParams } = new URL(request.url);
-  const existingJsonData = JSON.parse(await fetchJsonData());
-  const id = searchParams.get("id");
-
-  console.log("id", id);
-
-  const newJsonData = existingJsonData.filter(
-    (todo) => `${todo.id}` !== `${id}`
-  );
-  await fs.writeFile(
-    jsonDirectory() + "/todos.json",
-    JSON.stringify(newJsonData),
-    {
-      encoding: "utf-8",
-    }
-  );
-
-  return new Response("Deleted", {
-    status: 200,
-  });
-}
