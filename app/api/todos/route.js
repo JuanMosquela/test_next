@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import Todo from "../../../models/todo";
 import { connectToDB } from "../../../utils/db";
 import { redirect } from "next/navigation";
+import { revalidateTag } from "next/cache";
 
 export const GET = async () => {
   try {
@@ -33,6 +34,7 @@ export const POST = async (req) => {
     await newTodo.save();
 
     console.log(newTodo);
+    revalidateTag("todo");
 
     return NextResponse.json({ success: true, todo: newTodo }, { status: 200 });
   } catch (error) {

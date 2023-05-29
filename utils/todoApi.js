@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 export const getTodos = async () => {
   const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/todos`, {
-    next: { revalidate: 0 },
+    next: { revalidate: 0, tags: ["todos"] },
   });
 
   if (!res.ok) {
@@ -23,7 +23,9 @@ export const addTodo = async (title) => {
     },
   });
 
-  if (res.ok) {
-    console.log(await res.json());
+  if (!res.ok) {
+    throw new Error("Tdo ocouldnt bbe created");
   }
+
+  return res.json();
 };

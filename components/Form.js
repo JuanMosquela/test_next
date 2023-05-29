@@ -10,9 +10,8 @@ const Form = ({ addNewTodo }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    startTransition(() => {
-      addNewTodo(title);
-    });
+
+    addNewTodo(title);
 
     setTitle("");
     router.push("/");
