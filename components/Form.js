@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 
 const Form = ({ addNewTodo }) => {
   const [title, setTitle] = useState("");
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,6 +15,7 @@ const Form = ({ addNewTodo }) => {
     });
 
     setTitle("");
+    router.push("/");
   };
   return (
     <form onSubmit={handleSubmit}>

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import Todo from "../../../models/todo";
 import { connectToDB } from "../../../utils/db";
+import { redirect } from "next/navigation";
 
 export const GET = async () => {
   try {
@@ -27,9 +28,13 @@ export const POST = async (req) => {
       title,
     });
 
+    console.log(newTodo);
+
     await newTodo.save();
 
-    return NextResponse.json(newTodo, { status: 200 });
+    console.log(newTodo);
+
+    return NextResponse.json({ success: true, todo: newTodo }, { status: 200 });
   } catch (error) {
     return new Error(error);
   }
