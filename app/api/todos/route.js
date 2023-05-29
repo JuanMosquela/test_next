@@ -11,7 +11,7 @@ export const GET = async () => {
       return console.log("error");
     }
 
-    return new Response(JSON.stringify(todos), { status: 200 });
+    return NextResponse.json(todos, { status: 200 });
   } catch (error) {
     return new Error(error);
   }
@@ -23,16 +23,13 @@ export const POST = async (req) => {
 
     const { title } = await req.json();
 
-    console.log(title);
-
     const newTodo = new Todo({
       title,
     });
 
     await newTodo.save();
-    console.log(newTodo);
 
-    return new Response(JSON.stringify(newTodo), { status: 200 });
+    return NextResponse.json(newTodo, { status: 200 });
   } catch (error) {
     return new Error(error);
   }
